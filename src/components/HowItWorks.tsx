@@ -24,7 +24,7 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section className="py-24 bg-gradient-card">
+    <section className="py-24 bg-secondary/30">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-foreground mb-4">
@@ -39,7 +39,7 @@ const HowItWorks = () => {
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
-              <Card key={index} className="relative p-8 text-center shadow-card hover:shadow-primary transition-all duration-300 border-0 bg-card">
+              <Card key={index} className="relative p-8 text-center shadow-card hover:shadow-lg transition-all duration-300 border-0 bg-card">
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <div className="bg-primary text-primary-foreground rounded-full w-12 h-12 flex items-center justify-center text-lg font-bold">
                     {step.step}
@@ -47,7 +47,7 @@ const HowItWorks = () => {
                 </div>
                 
                 <div className="mt-8">
-                  <div className="bg-gradient-primary rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                  <div className="bg-primary rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                     <Icon className="w-8 h-8 text-white" />
                   </div>
                   

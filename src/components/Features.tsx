@@ -51,8 +51,8 @@ const Features = () => {
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <Card key={index} className="p-6 shadow-card hover:shadow-primary transition-all duration-300 border-0 bg-card">
-                <div className="bg-gradient-primary rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+              <Card key={index} className="p-6 shadow-card hover:shadow-lg transition-all duration-300 border-0 bg-card">
+                <div className="bg-primary rounded-lg w-12 h-12 flex items-center justify-center mb-4">
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 

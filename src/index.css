@@ -2,53 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Logistics Transportation Platform Design System
+/* Clean Transportation Platform Design System
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 240 10% 98%;
-    --foreground: 220 15% 15%;
+    --background: 0 0% 100%;
+    --foreground: 220 13% 18%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
+    --card-foreground: 220 13% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
+    --popover-foreground: 220 13% 18%;
 
-    /* Logistics Primary - Professional Blue */
-    --primary: 214 85% 45%;
+    /* Clean Professional Blue */
+    --primary: 220 70% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 214 85% 55%;
 
-    /* Trust Green for success states */
-    --secondary: 142 76% 36%;
-    --secondary-foreground: 0 0% 100%;
+    /* Neutral Secondary */
+    --secondary: 220 13% 95%;
+    --secondary-foreground: 220 13% 18%;
 
-    --muted: 240 6% 92%;
-    --muted-foreground: 220 15% 50%;
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 13% 50%;
 
-    /* Orange accent for CTAs */
-    --accent: 25 95% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 220 13% 91%;
+    --accent-foreground: 220 13% 18%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 90%;
-    --input: 240 6% 95%;
-    --ring: 214 85% 45%;
+    --border: 220 13% 91%;
+    --input: 220 13% 95%;
+    --ring: 220 70% 50%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(214 85% 45%), hsl(214 85% 55%));
-    --gradient-hero: linear-gradient(135deg, hsl(214 85% 45%) 0%, hsl(142 76% 36%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(240 10% 98%) 100%);
+    /* Clean Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(220 70% 50%), hsl(220 70% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(220 70% 50%) 0%, hsl(220 70% 40%) 100%);
 
-    /* Shadows */
-    --shadow-primary: 0 10px 30px -10px hsl(214 85% 45% / 0.3);
-    --shadow-card: 0 4px 20px -4px hsl(220 15% 15% / 0.1);
-    --shadow-glow: 0 0 40px hsl(214 85% 55% / 0.4);
+    /* Subtle Shadows */
+    --shadow-sm: 0 1px 3px 0 hsl(220 13% 18% / 0.1);
+    --shadow-card: 0 4px 12px -2px hsl(220 13% 18% / 0.08);
+    --shadow-lg: 0 10px 25px -3px hsl(220 13% 18% / 0.1);
 
     --radius: 0.5rem;
 
