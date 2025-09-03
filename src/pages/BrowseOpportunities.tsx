@@ -5,8 +5,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Package, Truck, Clock, DollarSign, Shield } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const BrowseOpportunities = () => {
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     location: "",
     vehicleType: "",
@@ -208,7 +210,10 @@ const BrowseOpportunities = () => {
                       <DollarSign className="w-4 h-4 mr-2" />
                       Place Bid
                     </Button>
-                    <Button variant="outline">
+                    <Button 
+                      variant="outline"
+                      onClick={() => navigate('/contract-details')}
+                    >
                       View Details
                     </Button>
                   </div>
