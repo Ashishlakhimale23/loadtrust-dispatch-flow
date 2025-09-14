@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Shield, CreditCard, Star, MapPin, Clock, Users } from "lucide-react";
+import { Shield, CreditCard, Star, Clock, Users } from "lucide-react";
 
 const Features = () => {
   const features = [
@@ -17,11 +17,6 @@ const Features = () => {
       icon: Star,
       title: "Trust Point System",
       description: "Transporters earn trust points for each successful delivery, building credibility for future opportunities."
-    },
-    {
-      icon: MapPin,
-      title: "Real-Time Tracking",
-      description: "Track your shipments in real-time with GPS integration and receive updates throughout the journey."
     },
     {
       icon: Clock,
