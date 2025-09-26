@@ -3,7 +3,10 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Package, Truck, Clock, DollarSign, Shield } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { MapPin, Package, Truck, Clock, DollarSign, Shield, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -14,6 +17,15 @@ const BrowseOpportunities = () => {
     location: "",
     vehicleType: "",
     sortBy: "latest"
+  });
+
+  const [selectedContract, setSelectedContract] = useState(null);
+  const [bidData, setBidData] = useState({
+    vehicleType: "",
+    ownerName: "",
+    isInsured: false,
+    bidAmount: "",
+    notes: ""
   });
 
   // Mock contract data
@@ -71,9 +83,26 @@ const BrowseOpportunities = () => {
     }
   ];
 
-  const handleBid = (contractId: string) => {
-    console.log("Bidding on contract:", contractId);
-    // Handle bidding logic
+  const handleBid = (contract) => {
+    setSelectedContract(contract);
+  };
+
+  const submitBid = () => {
+    console.log("Submitting bid for contract:", selectedContract.id, bidData);
+    // Handle bid submission logic here
+    setSelectedContract(null);
+    setBidData({
+      vehicleType: "",
+      ownerName: "",
+      isInsured: false,
+      bidAmount: "",
+      notes: ""
+    });
+  };
+
+  const openGoogleMaps = (location: string) => {
+    const encodedLocation = encodeURIComponent(location);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodedLocation}`, '_blank');
   };
 
   return (
@@ -179,8 +208,28 @@ const BrowseOpportunities = () => {
                           <MapPin className="w-4 h-4 text-primary" />
                           <div>
                             <p className="text-sm text-muted-foreground">Route</p>
-                            <p className="font-medium text-sm">{contract.pickupLocation}</p>
-                            <p className="font-medium text-sm">→ {contract.deliveryLocation}</p>
+                            <div className="flex items-center gap-1">
+                              <p className="font-medium text-sm">{contract.pickupLocation}</p>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-1"
+                                onClick={() => openGoogleMaps(contract.pickupLocation)}
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                              </Button>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <p className="font-medium text-sm">→ {contract.deliveryLocation}</p>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-1"
+                                onClick={() => openGoogleMaps(contract.deliveryLocation)}
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                              </Button>
+                            </div>
                             <p className="text-xs text-muted-foreground">{contract.estimatedKms} km</p>
                           </div>
                         </div>
@@ -206,13 +255,93 @@ const BrowseOpportunities = () => {
                     </div>
 
                     <div className="flex flex-col sm:flex-row lg:flex-col gap-3 lg:min-w-[160px]">
-                      <Button 
-                        onClick={() => handleBid(contract.id)}
-                        className="bg-primary hover:bg-primary/90"
-                      >
-                        <DollarSign className="w-4 h-4 mr-2" />
-                        Place Bid
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            onClick={() => handleBid(contract)}
+                            className="bg-primary hover:bg-primary/90"
+                          >
+                            <DollarSign className="w-4 h-4 mr-2" />
+                            Place Bid
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Place Bid - Contract #{contract.id}</DialogTitle>
+                            <DialogDescription>
+                              Submit your bid for transporting {contract.productType} from {contract.pickupLocation} to {contract.deliveryLocation}
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="vehicleType">Vehicle Type</Label>
+                              <Select value={bidData.vehicleType} onValueChange={(value) => setBidData({...bidData, vehicleType: value})}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select your vehicle type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="4-wheeler">4 Wheeler</SelectItem>
+                                  <SelectItem value="6-wheeler">6 Wheeler</SelectItem>
+                                  <SelectItem value="10-wheeler">10 Wheeler</SelectItem>
+                                  <SelectItem value="12-wheeler">12 Wheeler</SelectItem>
+                                  <SelectItem value="trailer">Trailer Truck</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="ownerName">Owner Name</Label>
+                              <Input
+                                id="ownerName"
+                                value={bidData.ownerName}
+                                onChange={(e) => setBidData({...bidData, ownerName: e.target.value})}
+                                placeholder="Enter vehicle owner name"
+                              />
+                            </div>
+                            
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                id="isInsured"
+                                checked={bidData.isInsured}
+                                onChange={(e) => setBidData({...bidData, isInsured: e.target.checked})}
+                                className="h-4 w-4 rounded border-gray-300"
+                              />
+                              <Label htmlFor="isInsured">Vehicle is insured</Label>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="bidAmount">Bid Amount (₹)</Label>
+                              <Input
+                                id="bidAmount"
+                                type="number"
+                                value={bidData.bidAmount}
+                                onChange={(e) => setBidData({...bidData, bidAmount: e.target.value})}
+                                placeholder="Enter your bid amount"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="notes">Additional Notes</Label>
+                              <Textarea
+                                id="notes"
+                                value={bidData.notes}
+                                onChange={(e) => setBidData({...bidData, notes: e.target.value})}
+                                placeholder="Enter any additional information..."
+                                rows={3}
+                              />
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <Button variant="outline" onClick={() => setSelectedContract(null)}>
+                              Cancel
+                            </Button>
+                            <Button onClick={submitBid} className="bg-primary hover:bg-primary/90">
+                              Submit Bid
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                       <Button 
                         variant="outline"
                         onClick={() => navigate('/contract-details')}
