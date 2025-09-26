@@ -8,12 +8,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import Navbar from "@/components/Navbar";
 
 const ContractDetails = () => {
   const navigate = useNavigate();
   const [bidAmount, setBidAmount] = useState("");
   const [message, setMessage] = useState("");
+  const [vehicleType, setVehicleType] = useState("");
+  const [ownerName, setOwnerName] = useState("");
+  const [isVehicleInsured, setIsVehicleInsured] = useState(false);
 
   // Mock contract data (in real app, this would come from URL params or API)
   const contract = {
@@ -48,7 +53,13 @@ const ContractDetails = () => {
   };
 
   const handlePlaceBid = () => {
-    console.log("Placing bid:", { amount: bidAmount, message });
+    console.log("Placing bid:", { 
+      amount: bidAmount, 
+      message, 
+      vehicleType,
+      ownerName,
+      isVehicleInsured
+    });
     // This would integrate with Supabase for actual functionality
   };
 
@@ -157,6 +168,48 @@ const ContractDetails = () => {
                             onChange={(e) => setBidAmount(e.target.value)}
                           />
                         </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="ownerName">Vehicle Owner Name</Label>
+                          <Input
+                            id="ownerName"
+                            placeholder="Enter vehicle owner name"
+                            value={ownerName}
+                            onChange={(e) => setOwnerName(e.target.value)}
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="vehicleType">Vehicle Type</Label>
+                          <Select value={vehicleType} onValueChange={setVehicleType}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select vehicle type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="10-wheeler">10 Wheeler</SelectItem>
+                              <SelectItem value="6-wheeler">6 Wheeler</SelectItem>
+                              <SelectItem value="4-wheeler">4 Wheeler (Pickup)</SelectItem>
+                              <SelectItem value="mini-truck">Mini Truck</SelectItem>
+                              <SelectItem value="trailer">Trailer</SelectItem>
+                              <SelectItem value="container">Container</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="vehicleInsured" 
+                            checked={isVehicleInsured}
+                            onCheckedChange={(checked) => setIsVehicleInsured(checked === true)}
+                          />
+                          <Label 
+                            htmlFor="vehicleInsured" 
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            Vehicle is insured
+                          </Label>
+                        </div>
+
                         <div className="space-y-2">
                           <Label htmlFor="message">Message (Optional)</Label>
                           <Textarea
