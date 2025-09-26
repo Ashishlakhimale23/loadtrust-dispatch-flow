@@ -20,8 +20,28 @@ const PostContract = () => {
     vehicleType: "",
     estimatedKms: "",
     insuranceRequired: false,
+    insuranceType: "",
     specialInstructions: ""
   });
+
+  // Calculate insurance cost based on type
+  const calculateInsuranceCost = () => {
+    if (!formData.insuranceRequired || !formData.insuranceType) return 0;
+    
+    switch (formData.insuranceType) {
+      case "trip":
+        // Calculate based on weight: ₹500 per ton
+        return parseFloat(formData.weight || "0") * 500;
+      case "monthly":
+        return 5000; // Fixed monthly rate
+      case "yearly":
+        return 50000; // Fixed yearly rate
+      default:
+        return 0;
+    }
+  };
+
+  const insuranceCost = calculateInsuranceCost();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -173,12 +193,59 @@ const PostContract = () => {
                     <Checkbox 
                       id="insurance"
                       checked={formData.insuranceRequired}
-                      onCheckedChange={(checked) => setFormData({...formData, insuranceRequired: checked as boolean})}
+                      onCheckedChange={(checked) => setFormData({...formData, insuranceRequired: checked as boolean, insuranceType: ""})}
                     />
                     <Label htmlFor="insurance" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                      Insurance Required (Premium will be calculated based on product value)
+                      Insurance Required
                     </Label>
                   </div>
+
+                  {/* Insurance Type Selection - Only show when insurance is required */}
+                  {formData.insuranceRequired && (
+                    <div className="space-y-4 pl-6 border-l-2 border-border">
+                      <div className="space-y-2">
+                        <Label htmlFor="insuranceType">Insurance Type</Label>
+                        <Select 
+                          value={formData.insuranceType} 
+                          onValueChange={(value) => setFormData({...formData, insuranceType: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select insurance type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="trip">Just This Trip</SelectItem>
+                            <SelectItem value="monthly">Monthly Plan</SelectItem>
+                            <SelectItem value="yearly">Yearly Plan</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Insurance Cost Display */}
+                      {formData.insuranceType && (
+                        <div className="bg-muted/50 p-4 rounded-lg">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Insurance Cost:</span>
+                            <span className="font-semibold text-primary">₹{insuranceCost.toLocaleString()}</span>
+                          </div>
+                          {formData.insuranceType === "trip" && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Calculated at ₹500 per ton ({formData.weight || 0} tons)
+                            </p>
+                          )}
+                          {formData.insuranceType === "monthly" && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Fixed monthly rate
+                            </p>
+                          )}
+                          {formData.insuranceType === "yearly" && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Fixed yearly rate (Save 17% compared to monthly)
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   
                   <div className="space-y-2">
                     <Label htmlFor="specialInstructions">Special Instructions</Label>
