@@ -7,9 +7,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar, MapPin, Package, Truck, Shield, Clock } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const PostContract = () => {
+  const navigate = useNavigate();
+  const { user, addContract } = useAuth();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     productType: "",
     weight: "",
@@ -45,8 +51,25 @@ const PostContract = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Contract posted:", formData);
-    // Handle form submission
+    if (!user) {
+      toast({ title: "Please sign in", description: "You need to sign in to post a contract", variant: "destructive" });
+      navigate("/sign-in");
+      return;
+    }
+    addContract({
+      productType: formData.productType,
+      weight: Number(formData.weight),
+      pickupLocation: formData.pickupLocation,
+      deliveryLocation: formData.deliveryLocation,
+      pickupDate: formData.pickupDate,
+      deliveryDate: formData.deliveryDate,
+      vehicleType: formData.vehicleType,
+      estimatedKms: Number(formData.estimatedKms),
+      insuranceRequired: formData.insuranceRequired,
+      company: user.companyName || user.fullName,
+    });
+    toast({ title: "Contract posted successfully!" });
+    navigate("/profile");
   };
 
   return (
