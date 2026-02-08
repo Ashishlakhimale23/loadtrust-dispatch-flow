@@ -10,9 +10,13 @@ import { MapPin, Package, Truck, Clock, DollarSign, Shield, ExternalLink } from 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const BrowseOpportunities = () => {
   const navigate = useNavigate();
+  const { user, contracts: allContracts, bids, addBid } = useAuth();
+  const { toast } = useToast();
   const [filters, setFilters] = useState({
     location: "",
     vehicleType: "",
@@ -28,76 +32,32 @@ const BrowseOpportunities = () => {
     notes: ""
   });
 
-  // Mock contract data
-  const contracts = [
-    {
-      id: "C001",
-      productType: "Electronics",
-      weight: 3.5,
-      pickupLocation: "Mumbai, Maharashtra",
-      deliveryLocation: "Bangalore, Karnataka",
-      pickupDate: "2024-01-15",
-      deliveryDate: "2024-01-17",
-      vehicleType: "10 Wheeler",
-      estimatedKms: 840,
-      insuranceRequired: true,
-      company: "Tech Solutions Ltd",
-      companyRating: 4.5,
-      postedDate: "2024-01-10",
-      bidsCount: 12,
-      status: "Open"
-    },
-    {
-      id: "C002",
-      productType: "Furniture",
-      weight: 8.0,
-      pickupLocation: "Delhi, Delhi",
-      deliveryLocation: "Jaipur, Rajasthan",
-      pickupDate: "2024-01-20",
-      deliveryDate: "2024-01-21",
-      vehicleType: "12 Wheeler",
-      estimatedKms: 280,
-      insuranceRequired: false,
-      company: "Home Decor Inc",
-      companyRating: 4.2,
-      postedDate: "2024-01-12",
-      bidsCount: 8,
-      status: "Open"
-    },
-    {
-      id: "C003",
-      productType: "Food Items",
-      weight: 5.2,
-      pickupLocation: "Chennai, Tamil Nadu",
-      deliveryLocation: "Hyderabad, Telangana",
-      pickupDate: "2024-01-18",
-      deliveryDate: "2024-01-19",
-      vehicleType: "6 Wheeler",
-      estimatedKms: 625,
-      insuranceRequired: true,
-      company: "Fresh Foods Corp",
-      companyRating: 4.8,
-      postedDate: "2024-01-11",
-      bidsCount: 15,
-      status: "Open"
-    }
-  ];
-
+  // Use contracts from context (includes seeded + user-posted)
+  const contracts = allContracts.filter(c => c.status === "Open");
   const handleBid = (contract) => {
     setSelectedContract(contract);
   };
 
   const submitBid = () => {
-    console.log("Submitting bid for contract:", selectedContract.id, bidData);
-    // Handle bid submission logic here
-    setSelectedContract(null);
-    setBidData({
-      vehicleType: "",
-      ownerName: "",
-      isInsured: false,
-      bidAmount: "",
-      notes: ""
+    if (!user) {
+      toast({ title: "Please sign in", description: "You need to sign in to place a bid", variant: "destructive" });
+      navigate("/sign-in");
+      return;
+    }
+    if (!bidData.bidAmount || !bidData.vehicleType) {
+      toast({ title: "Error", description: "Vehicle type and bid amount are required", variant: "destructive" });
+      return;
+    }
+    addBid({
+      contractId: selectedContract?.id || "",
+      vehicleType: bidData.vehicleType,
+      isInsured: bidData.isInsured,
+      bidAmount: Number(bidData.bidAmount),
+      notes: bidData.notes,
     });
+    toast({ title: "Bid placed successfully!" });
+    setSelectedContract(null);
+    setBidData({ vehicleType: "", ownerName: "", isInsured: false, bidAmount: "", notes: "" });
   };
 
   const openGoogleMaps = (location: string) => {
@@ -190,7 +150,7 @@ const BrowseOpportunities = () => {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-muted-foreground">{contract.company} • ★ {contract.companyRating}</p>
+                          <p className="text-muted-foreground">{contract.company}</p>
                         </div>
                       </div>
 
@@ -248,7 +208,7 @@ const BrowseOpportunities = () => {
                           <div>
                             <p className="text-sm text-muted-foreground">Vehicle</p>
                             <p className="font-medium">{contract.vehicleType}</p>
-                            <p className="text-xs text-muted-foreground">{contract.bidsCount} bids</p>
+                            <p className="text-xs text-muted-foreground">{bids.filter(b => b.contractId === contract.id).length} bids</p>
                           </div>
                         </div>
                       </div>
